@@ -4,7 +4,7 @@
   "default": true,
   "schedule": [
     {% with default_index_settings={}, index_name="clickbench" %}
-    {{ benchmark.collect(parts="../../common_operations/check_cluster_health.json") }},
+    {{ benchmark.collect(parts="../../common_operations/workload_setup.json") }},
     {% endwith %}
     {{ benchmark.collect(parts="common/clickbench-schedule.json") }}
   ]
@@ -47,9 +47,6 @@
   "description": "Indexes the ClickBench dataset and runs OpenSearch PPL queries to benchmark analytical use case performance. Specific to the datafusion branch.",
   "default": false,
   "schedule": [
-    {% with default_index_settings={}, index_name="clickbench" %}
-    {{ benchmark.collect(parts="../../common_operations/check_cluster_health.json") }},
-    {% endwith %}
-    {{ benchmark.collect(parts="common/clickbench-schedule.json") }}
+    {{ benchmark.collect(parts="common/mustang-clickbench-schedule.json") }}
   ]
 }
