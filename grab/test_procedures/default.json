@@ -1,7 +1,7 @@
 {
   "name": "clickbench",
   "description": "Indexes the ClickBench dataset and runs OpenSearch PPL queries to benchmark analytical use case performance",
-  "default": true,
+  "default": false,
   "schedule": [
     {{ benchmark.collect(parts="common/clickbench-schedule.json") }}
   ]
@@ -41,9 +41,32 @@
   "description": "Indexes the ClickBench dataset and runs OpenSearch PPL queries to benchmark analytical use case performance. Specific to the datafusion branch.",
   "default": false,
   "schedule": [
-    {% with default_index_settings={}, index_name="clickbench" %}
+    {% with default_index_settings={}, index_name="grab-2026.01.25.08.54-000001" %}
     {{ benchmark.collect(parts="../../common_operations/check_cluster_health.json") }},
     {% endwith %}
     {{ benchmark.collect(parts="common/clickbench-schedule.json") }}
+  ]
+},
+{
+  "name": "grab-dsl",
+  "description": "Indexes the ClickBench dataset and runs OpenSearch PPL queries to benchmark analytical use case performance. Specific to the datafusion branch.",
+  "default": true,
+  "schedule": [
+    {% with default_index_settings={}, index_name="grab-2026.01.25.08.54-000001" %}
+    {{ benchmark.collect(parts="../../common_operations/check_cluster_health.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="common/dsl-grab-schedule.json") }}
+  ]
+},
+{
+  
+  "name": "datafusion-grab-ppl",
+  "description": "Indexes the ClickBench dataset and runs OpenSearch PPL queries to benchmark analytical use case performance. Specific to the datafusion branch.",
+  "default": false,
+  "schedule": [
+    {% with default_index_settings={}, index_name="clickbench" %}
+    {{ benchmark.collect(parts="../../common_operations/check_cluster_health.json") }},
+    {% endwith %}
+    {{ benchmark.collect(parts="common/grab-schedule.json") }}
   ]
 }

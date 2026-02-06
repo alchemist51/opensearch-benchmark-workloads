@@ -1,0 +1,1094 @@
+ {
+    "name": "dsl-q01-count-all",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "COUNT(*)": {
+          "value_count": {
+            "field": "_index"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q02-count-provider",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "common_provider": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "COUNT(*)": {
+          "value_count": {
+            "field": "_index"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q03-sum-count-avg",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "SUM(common_endpoint_elapsed)": {
+          "sum": {
+            "field": "common_endpoint_elapsed"
+          }
+        },
+        "COUNT(*)": {
+          "value_count": {
+            "field": "_index"
+          }
+        },
+        "AVG(common_endpoint_elapsed)": {
+          "avg": {
+            "field": "common_endpoint_elapsed"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q04-avg-driver",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "AVG(common_driver_id)": {
+          "avg": {
+            "field": "common_driver_id"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q05-distinct-user",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "COUNT(DISTINCT common_user)": {
+          "cardinality": {
+            "field": "common_user"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q06-distinct-trace",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "COUNT(DISTINCT common_trace_id)": {
+          "cardinality": {
+            "field": "common_trace_id"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q07-min-max-ts",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "MIN(@timestamp)": {
+          "min": {
+            "field": "@timestamp"
+          }
+        },
+        "MAX(@timestamp)": {
+          "max": {
+            "field": "@timestamp"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q08-group-provider",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "common_provider": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_provider": {
+                  "terms": {
+                    "field": "common_provider",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q09-region-users",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_region": {
+                  "terms": {
+                    "field": "common_region",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(DISTINCT common_user)": {
+              "cardinality": {
+                "field": "common_user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q10-region-stats",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_region": {
+                  "terms": {
+                    "field": "common_region",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            },
+            "AVG(common_endpoint_elapsed)": {
+              "avg": {
+                "field": "common_endpoint_elapsed"
+              }
+            },
+            "COUNT(DISTINCT common_user)": {
+              "cardinality": {
+                "field": "common_user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q11-vehicle-type",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "app_name": {
+                  "terms": {
+                    "field": "app_name",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(DISTINCT common_user)": {
+              "cardinality": {
+                "field": "common_user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q12-provider-vehicle",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_provider": {
+                  "terms": {
+                    "field": "common_provider",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              },
+              {
+                "app_name": {
+                  "terms": {
+                    "field": "app_name",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(DISTINCT common_user)": {
+              "cardinality": {
+                "field": "common_user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q13-message-count",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "app_name": {
+                  "terms": {
+                    "field": "app_name",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q14-message-users",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "app_name": {
+                  "terms": {
+                    "field": "app_name",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(DISTINCT common_user)": {
+              "cardinality": {
+                "field": "common_user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q15-user-activity",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_user": {
+                  "terms": {
+                    "field": "common_user",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q16-user-message",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_user": {
+                  "terms": {
+                    "field": "common_user",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              },
+              {
+                "common_http_url": {
+                  "terms": {
+                    "field": "common_http_url",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q17-user-minute",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_user": {
+                  "terms": {
+                    "field": "common_user",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              },
+              {
+                "minute": {
+                  "date_histogram": {
+                    "field": "@timestamp",
+                    "calendar_interval": "minute",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q18-like-google",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "wildcard": {
+          "common_http_url": {
+            "wildcard": "*10*",
+            "case_insensitive": true,
+            "boost": 1.0
+          }
+        }
+      },
+      "aggregations": {
+        "COUNT(*)": {
+          "value_count": {
+            "field": "_index"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q19-google-messages",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "wildcard": {
+                "common_http_url": "*10*"
+              }
+            }
+          ],
+          "must_not": [
+            {
+              "term": {
+                "common_user": ""
+              }
+            }
+          ]
+        }
+      },
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_user": {
+                  "terms": {
+                    "field": "common_user",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q20-url-popularity",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_http_url": {
+                  "terms": {
+                    "field": "common_http_url",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q21-url-offset",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_http_url": {
+                  "terms": {
+                    "field": "common_http_url",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q22-heavy-metrics",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "SUM(common_endpoint_elapsed)": {
+          "sum": {
+            "field": "common_endpoint_elapsed"
+          }
+        },
+        "SUM(common_endpoint_elapsed + 1)": {
+          "sum": {
+            "script": {
+              "source": "doc['common_endpoint_elapsed'].value + 1",
+              "lang": "painless"
+            }
+          }
+        },
+        "SUM(common_endpoint_elapsed + 2)": {
+          "sum": {
+            "script": {
+              "source": "doc['common_endpoint_elapsed'].value + 2",
+              "lang": "painless"
+            }
+          }
+        },
+        "SUM(common_endpoint_elapsed + 3)": {
+          "sum": {
+            "script": {
+              "source": "doc['common_endpoint_elapsed'].value + 3",
+              "lang": "painless"
+            }
+          }
+        },
+        "SUM(common_endpoint_elapsed + 4)": {
+          "sum": {
+            "script": {
+              "source": "doc['common_endpoint_elapsed'].value + 4",
+              "lang": "painless"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q23-provider-client",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_provider": {
+                  "terms": {
+                    "field": "common_provider",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              },
+              {
+                "common_client_ip": {
+                  "terms": {
+                    "field": "common_client_ip",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            },
+            "AVG(common_endpoint_elapsed)": {
+              "avg": {
+                "field": "common_endpoint_elapsed"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q24-trace-client",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "common_trace_id": {
+                  "terms": {
+                    "field": "common_trace_id",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              },
+              {
+                "common_client_ip": {
+                  "terms": {
+                    "field": "common_client_ip",
+                    "missing_bucket": true,
+                    "missing_order": "first",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q25-time-bucket",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10000,
+      "aggregations": {
+        "composite_buckets": {
+          "composite": {
+            "size": 1000,
+            "sources": [
+              {
+                "minute": {
+                  "date_histogram": {
+                    "field": "@timestamp",
+                    "calendar_interval": "minute",
+                    "order": "asc"
+                  }
+                }
+              }
+            ]
+          },
+          "aggregations": {
+            "COUNT(*)": {
+              "value_count": {
+                "field": "_index"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "dsl-q26-grab-urls-sorted",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10,
+      "query": {
+        "wildcard": {
+          "common_http_url": {
+            "wildcard": "*10*",
+            "case_insensitive": true,
+            "boost": 1.0
+          }
+        }
+      },
+      "sort": [
+        {
+          "@timestamp": {
+            "order": "asc",
+            "missing": "_first"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "dsl-q27-error-messages-by-time",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "_source": {
+        "includes": ["app_name"],
+        "excludes": []
+      },
+      "sort": [
+        {
+          "@timestamp": {
+            "order": "asc",
+            "missing": "_first"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "dsl-q28-error-types-sorted",
+    "operation-type": "raw-request",
+    "path": "/{{index_name | default('grab-logs')}}/_search",
+    "method": "POST",
+    "request_timeout": 600,
+    "body": {
+      "from": 0,
+      "size": 10,
+      "query": {
+        "bool": {
+          "must_not": [
+            {
+              "term": {
+                "app_name": ""
+              }
+            }
+          ]
+        }
+      },
+      "_source": {
+        "includes": ["app_name"],
+        "excludes": []
+      },
+      "sort": [
+        {
+          "app_name": {
+            "order": "asc",
+            "missing": "_first"
+          }
+        }
+      ]
+    }
+  },
+  {
+  "name": "dsl-q29-error-types-multi-sort",
+  "operation-type": "raw-request",
+  "path": "/{{index_name | default('grab-logs')}}/_search",
+  "method": "POST",
+    "request_timeout": 600,
+  "body": {
+    "from": 0,
+    "size": 10,
+    "timeout": "1m",
+    "query": {
+      "bool": {
+        "must_not": [
+          {
+            "term": {
+              "app_name": ""
+            }
+          }
+        ]
+      }
+    },
+    "_source": {
+      "includes": ["app_name"],
+      "excludes": []
+    },
+    "sort": [
+      {
+        "@timestamp": {
+          "order": "asc",
+          "missing": "_first"
+        }
+      },
+      {
+        "app_name": {
+          "order": "asc",
+          "missing": "_first"
+        }
+      }
+    ]
+  }
+}

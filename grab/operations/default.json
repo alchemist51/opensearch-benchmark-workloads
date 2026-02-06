@@ -1,0 +1,244 @@
+    {
+      "name": "q01-count-all",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count()" }
+    },
+    {
+      "name": "q02-count-provider",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where common_provider != \"\" | stats count()" }
+    },
+    {
+      "name": "q03-sum-count-avg",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats sum(common_endpoint_elapsed), count(), avg(common_endpoint_elapsed)" }
+    },
+    {
+      "name": "q04-avg-driver",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats avg(common_driver_id)" }
+    },
+    {
+      "name": "q05-distinct-user",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats dc(common_user)" }
+    },
+    {
+      "name": "q06-distinct-trace",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats dc(common_trace_id)" }
+    },
+    {
+      "name": "q07-min-max-ts",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats min(@timestamp), max(@timestamp)" }
+    },
+    {
+      "name": "q08-group-provider",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where common_provider != \"\" | stats count() by common_provider | sort - `count()`" }
+    },
+    {
+      "name": "q09-region-users",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats dc(common_user) as u by common_region | sort -u | head 10" }
+    },
+    {
+      "name": "q10-region-stats",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() as c, avg(common_endpoint_elapsed), dc(common_user) by common_region | sort - c | head 10" }
+    },
+    {
+      "name": "q11-vehicle-type",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where app_name != \"\" | stats dc(common_user) as u by app_name | sort -u | head 10" }
+    },
+    {
+      "name": "q12-provider-vehicle",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where app_name != \"\" | stats dc(common_user) as u by common_provider, app_name | sort -u | head 10" }
+    },
+    {
+      "name": "q13-message-count",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where app_name != \"\" | stats count() as c by app_name | sort -c | head 10" }
+    },
+    {
+      "name": "q14-message-users",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where app_name  != \"\" | stats dc(common_user) as u by app_name | sort -u | head 10" }
+    },
+    {
+      "name": "q15-user-activity",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() by common_user | sort - `count()` | head 10" }
+    },
+    {
+      "name": "q16-user-message",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() by common_user, common_http_url | sort - `count()` | head 10" }
+    },
+    {
+      "name": "q17-user-minute",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | eval m = date_format(@timestamp, \"%Y-%m-%d %H:%M\") | stats count() by common_user, m | sort - `count()` | head 10" }
+    },
+    {
+      "name": "q18-like-google",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where like(common_http_url, \"%10%\") | stats count()" }
+    },
+    {
+      "name": "q19-google-messages",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | where like(common_http_url, \"%10%\") and common_user != \"\"| stats count() as c by common_user | sort -c | head 10" }
+    },
+    {
+      "name": "q20-url-popularity",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() as c by common_http_url | sort -c | head 10" }
+    },
+    {
+      "name": "q21-url-offset",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() as c by common_http_url | sort -c | head 10 from 10" }
+    },
+    {
+      "name": "q22-heavy-metrics",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": {
+        "query": "source = {{index_name | default('clickbench')}} | stats sum(common_endpoint_elapsed), sum(common_endpoint_elapsed+1), sum(common_endpoint_elapsed+2), sum(common_endpoint_elapsed+3), sum(common_endpoint_elapsed+4)"
+      }
+    },
+    {
+      "name": "q23-provider-client",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() as c, avg(common_endpoint_elapsed) by common_provider, common_client_ip | sort -c | head 10" }
+    },
+    {
+      "name": "q24-trace-client",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": { "query": "source = {{index_name | default('clickbench')}} | stats count() as c by common_trace_id, common_client_ip | sort -c | head 10" }
+    },
+    {
+      "name": "q25-time-bucket",
+      "operation-type": "raw-request",
+      "path": "/_plugins/_ppl",
+      "method": "POST",
+    "timeout": "5m",
+      "body": {
+        "query": "source = {{index_name | default('clickbench')}} | eval M = date_format(@timestamp, \"%Y-%m-%d %H:%M\") | stats count() as PageViews by M | sort M | head 10 from 10"
+      }
+    },
+    {
+    "name": "q26-grab-urls-sorted",
+    "operation-type": "raw-request",
+    "path": "/_plugins/_ppl",
+    "method": "POST",
+    "timeout": "5m",
+    "body": {
+    "query": "source = {{index_name | default('grab-logs')}} | where like(common_http_url, \"%10%\") | sort @timestamp | head 10"
+    }
+    },
+    {
+        "name": "q27-error-messages-by-time",
+        "operation-type": "raw-request",
+        "path": "/_plugins/_ppl",
+        "method": "POST",
+    "timeout": "5m",
+        "body": {
+        "query": "source = {{index_name | default('grab-logs')}} | where app_name != \"\" | sort @timestamp | fields app_name | head 10"
+        }
+    },
+    {
+        "name": "q28-error-types-sorted",
+        "operation-type": "raw-request",
+        "path": "/_plugins/_ppl",
+        "method": "POST",
+    "timeout": "5m",
+        "body": {
+        "query": "source = {{index_name | default('grab-logs')}} | where app_name != \"\" | fields app_name | sort app_name | head 10"
+        }
+    },
+    {
+        "name": "q29-error-types-multi-sort",
+        "operation-type": "raw-request",
+        "path": "/_plugins/_ppl",
+        "method": "POST",
+    "timeout": "5m",
+        "body": {
+        "query": "source = {{index_name | default('grab-logs')}} | where app_name != \"\" | sort @timestamp, app_name | fields app_name | head 10"
+        }
+    }
